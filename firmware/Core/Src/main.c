@@ -48,14 +48,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define DEBUG 1
+#define DEBUG 0
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-RTC_TimeTypeDef myTime = {0};
-RTC_DateTypeDef myDate = {0};
+RTC_TimeTypeDef myTime;
+RTC_DateTypeDef myDate;
 bool Is12HourEnabled = false;
 bool IsOneHourAdd = false;
 
@@ -92,9 +92,13 @@ uint32_t button_release_time = 0;
 uint32_t last_press_time = 0;
 uint8_t press_count = 0;
 uint8_t button_state = 0;
+uint8_t gpsCheck = 0;
+uint8_t lastGpsCheck = 0;
 uint8_t long_press_detected = 0;
 bool Format24Flag = true;
 bool DSTFlag = false;
+bool isDMA = false;
+bool inMenu = false;
 int rtc_stage = -1;
 
 #define BUFF_SIZE 100
@@ -124,6 +128,9 @@ void Update_Changes(int btn_status)
 	else if(btn_status == 3){
 		uint8_t utc_set_state = 0, button_state;
 		uint32_t utc_ms_count = 0;
+		uint8_t menuOpen = 0;
+		inMenu = true;
+
 		HAL_TIM_Base_Stop_IT(&htim6);
 
 		while(utc_set_state < 10){
@@ -139,14 +146,17 @@ void Update_Changes(int btn_status)
 				case 1:
 					button_state = HAL_GPIO_ReadPin(BTN_PORT, BTN_PIN);
 					if(button_state == GPIO_PIN_RESET){
-						if(UTC_Constant >= 38)	UTC_Constant = 1;
-						else					UTC_Constant++;
+						if(menuOpen == 1) {
+							if(UTC_Constant >= 38)	UTC_Constant = 1;
+							else					UTC_Constant++;
+						}
+						HAL_Delay(100);
 						#if DEBUG == 1
 						//printf("new utc= %d \r\n", UTC_Constant);
 						#endif
 						utc_ms_count = HAL_GetTick();
 						Show_UTC(UTC_Constant);
-						HAL_Delay(100);
+						menuOpen = 1;
 						while(button_state == HAL_GPIO_ReadPin(BTN_PORT, BTN_PIN));
 					}
 
@@ -160,11 +170,16 @@ void Update_Changes(int btn_status)
 					break;
 				case 2:
 					Read_GPS(gps_buff, BUFF_SIZE);
-					if(strstr(gps_buff, "$GPGGA") != NULL){
+
+					if(strstr(gps_buff, "$GNRMC") != NULL){
 						Parse_GPGGA(gps_buff);
-						HAL_TIM_Base_Start_IT(&htim6);
 						utc_set_state = 20;
 					}
+
+				    HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, UTC_Constant);
+
+					HAL_TIM_Base_Start_IT(&htim6);
+					inMenu = false;
 					break;
 
 				default: break;
@@ -172,41 +187,27 @@ void Update_Changes(int btn_status)
 
 		}
 	}
-
 }
+
 
 void Show_UTC(uint8_t utc_num)
 {
-	static uint8_t test[5] = {0};
-	uint16_t dig1=0, dig2=0, dig3=0, dig4=0;
-	dig1 = 1U << (utc_num % 10);
-	dig2 = 1U << (utc_num / 10);
-	dig3 = 0;
-	dig4 = 0;
-
-	test[0] = dig1 & 0xFF;
-	test[1] = ((dig2 & 0x3F) << 2) | ((dig1 >> 8) & 0x03) ;
-	test[2] = ((dig2>>6) & 0x0F)   | ((dig3 & 0x0F) << 4);
-	test[3] = ((dig4 & 0x03) << 6) | ((dig3>>4) & 0x3F);
-	test[4] = ((dig4>>2) & 0xFF);
+	DisplayDigits(0, 0, 0, 0, utc_num/10, utc_num%10);
 
 #if DEBUG == 1
 	//printf("%d, %d, %d, %d, %d\r\n", test[4], test[3],test[2],test[1],test[0]);
 #endif
-	HAL_SPI_Transmit_DMA(&hspi1, test, 5);
 }
 
-char disp = 0;
 void Show_Time(void)
 {
-	static uint8_t test[5] = {0};
-	uint16_t dig1=0, dig2=0, dig3=0, dig4=0;
 	uint8_t new_hour=0;
 	HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
-//	myTime.Seconds = 12; myTime.Minutes = 59; myTime.Hours = 06;
-	dig1 = 1U << (myTime.Minutes % 10);
-	dig2 = 1U << (myTime.Minutes / 10);
+
+	//myTime.Seconds = 12; myTime.Minutes = 59; myTime.Hours = 06;
+	Print_UTC_Time(myTime.Hours, myTime.Minutes, myTime.Seconds);
+
 	new_hour = myTime.Hours;
 	if(Is12HourEnabled){
 		if(new_hour > 12)
@@ -214,21 +215,36 @@ void Show_Time(void)
 		 if(new_hour == 0)
 			new_hour = 12;
 	}
-	dig3 = 1U << (new_hour % 10);
-	dig4 = 1U << (new_hour / 10);
-	test[0] = dig1 & 0xFF;
-	test[1] = ((dig2 & 0x3F) << 2) | ((dig1 >> 8) & 0x03) ;
-	test[2] = ((dig2>>6) & 0x0F)   | ((dig3 & 0x0F) << 4);
-	test[3] = ((dig4 & 0x03) << 6) | ((dig3>>4) & 0x3F);
-	test[4] = ((dig4>>2) & 0xFF);
-	if(disp == 1)
-		HAL_SPI_Transmit_DMA(&hspi1, test, 5);
-	disp = 1-disp;
+
+	DisplayDigits(new_hour/10, new_hour%10, myTime.Minutes/10, myTime.Minutes%10, myTime.Seconds/10, myTime.Seconds%10);
 }
 
+void DisplayDigits(uint8_t hour1, uint8_t hour2, uint8_t min3, uint8_t min4, uint8_t sec5, uint8_t sec6) {
+	static uint8_t shiftRegisters[8] = {0};
+	uint16_t dig1, dig2, dig3, dig4, dig5, dig6;
+
+	dig1 = 1U << sec6;
+	dig2 = 1U << sec5;
+	dig3 = 1U << min4;
+	dig4 = 1U << min3;
+	dig5 = 1U << hour2;
+	dig6 = 1U << hour1;
+
+	shiftRegisters[0] = dig1 & 0xFF;
+	shiftRegisters[1] = ((dig2 & 0x3F) << 2) | ((dig1 >> 8) & 0x03);
+	shiftRegisters[2] = ((dig3 & 0x0F) << 4) | ((dig2 >> 6) & 0x0F);
+	shiftRegisters[3] = ((dig4 & 0x03) << 6) | ((dig3 >> 4) & 0x3F);
+	shiftRegisters[4] = ((dig4 >> 2) & 0xFF);
+	shiftRegisters[5] = dig5 & 0xFF;
+	shiftRegisters[6] = ((dig6 & 0x3F) << 2) | ((dig5 >> 8) & 0x03);
+	shiftRegisters[7] = ((dig6 >> 6) & 0x0F);
+
+	HAL_SPI_Transmit_DMA(&hspi1, shiftRegisters, 8);
+}
 
 uint32_t f_write = 0xBABADEAD;
 uint32_t f_read = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -266,10 +282,17 @@ int main(void)
   MX_TIM6_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 #if DEBUG == 1
    printf(">> Program starts... \r\n");
 #endif
+   printf(">> Program starts... \r\n");
+
+   if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0) != 0x00) {
+	   UTC_Constant = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0);
+   }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -285,21 +308,46 @@ int main(void)
 	  	  case 0:
 	  		  Read_GPS(gps_buff, BUFF_SIZE);
 
-			  if(strstr(gps_buff, "$GPGGA") != NULL){
+			  if(strstr(gps_buff, "$GNRMC") != NULL){
+				  printf(gps_buff);
 				  Parse_GPGGA(gps_buff);
-				  rtc_stage = 1;
 			  }
+
+		  	  rtc_stage = 1;
 	  		  break;
 
 	  	  case 1:
 	  		  HAL_TIM_Base_Start_IT(&htim6);
+	  		  HAL_TIM_Base_Start_IT(&htim7);
+
 	  		  rtc_stage = 2;
 	  		  break;
 
 	  	  case 2:
+#if DEBUG == 1
+	  		  Read_GPS(gps_buff, BUFF_SIZE);
+
+			  if(strstr(gps_buff, "$GNRMC") != NULL){
+				  printf(gps_buff);
+				  Parse_GPGGA(gps_buff);
+			  }
+#endif
+
+			  /*if(myTime.Seconds == 00) {
+				  lastGpsCheck = gpsCheck;
+
+				  uint8_t tubeNum[10] = {1, 2, 5, 4, 8, 3, 9, 0, 7, 6};
+
+				  for(int i = 0; i < 10; i++) {
+					  DisplayDigits(tubeNum[i], tubeNum[i], tubeNum[i], tubeNum[i], tubeNum[i], tubeNum[i]);
+					  HAL_Delay(100);
+				  }
+			  }*/
+
 	  		  process_button_events();
 	  		  Update_Changes(status);
 	  		  status = -1;
+
 	  		  break;
 
 	  	  default: break;
@@ -371,7 +419,6 @@ void Read_GPS(char *buff, uint8_t size)
 
 	MX_USART1_UART_Init();
 	USART1->CR1 |= USART_CR1_RE;
-
 	while(idx < size)
 	{
 		if(USART1->ISR & USART_ISR_RXNE_RXFNE){
@@ -385,18 +432,27 @@ void Read_GPS(char *buff, uint8_t size)
 	}
 
 	USART1->CR1 &= ~USART_CR1_RE;
+
 }
 
 void Parse_GPGGA(char *sentence)
 {
-	char *token;
-	uint8_t sec, min, hour;
-	char utc_time[10];
+	uint8_t sec = 0, min = 0, hour = 0;
+	char utc_time[10] = "";
+	char gpsParsed[15][10] = { NULL };
+	uint8_t i = 0;
 
-	token = strtok(sentence, ",");
-	token = strtok(NULL, ",");
+	char* token = strtok(sentence, ",");
 
-	snprintf(utc_time, sizeof(utc_time), "%s", token);  // Copy the time string
+	do {
+		strcpy(gpsParsed[i], token);
+		token = strtok(NULL, ",");
+		i++;
+	} while(token != NULL);
+
+	//token = strtok(NULL, ",");
+
+	snprintf(utc_time, sizeof(utc_time), "%s", gpsParsed[1]);  // Copy the time string
 
 	// Extract hours, minutes, and seconds
 	hour = (utc_time[0] - '0') * 10 + (utc_time[1] - '0');
@@ -406,22 +462,28 @@ void Parse_GPGGA(char *sentence)
 #if DEBUG == 1
 	//Print_UTC_Time(hour, min, sec);
 #endif
-	RTC_SetTime(hour, min, sec);
-	RTC_SetDate(24, RTC_MONTH_DECEMBER, 20, RTC_WEEKDAY_SUNDAY);
-	//Update_Changes(0);
+	//RTC_SetTime(hour, min, sec);
+
+	if(gpsParsed[6][0] == '1' || gpsParsed[6][0] == '2' || gpsParsed[2][0] == 'A' || gpsParsed[1][6] == '.'){
+		RTC_SetTime(hour, min, sec);
+		RTC_SetDate(24, RTC_MONTH_DECEMBER, 20, RTC_WEEKDAY_SUNDAY);
+
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 1);
+	} else {
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 0);
+	}
+	//Update_Changes(0);*/
 }
 
 void Print_UTC_Time(uint8_t hour, uint8_t minute, uint8_t second) {
-#if DEBUG == 1
-    char time_str[25];
+	char time_str[25];
     snprintf(time_str, sizeof(time_str), "UTC Time: %02d:%02d:%02d \r\n", hour, minute, second);
     HAL_UART_Transmit(&huart2, (uint8_t*)time_str, strlen(time_str), 100);
-#endif
 }
 
 void RTC_SetTime(uint8_t hour, uint8_t min, uint8_t sec)
 {
-	RTC_TimeTypeDef sTime = {0};
+	RTC_TimeTypeDef sTime;
 	uint8_t new_hour=0, new_min=0;
 
 	utc_offset = calculate_utc_offset(UTC_Constant);
@@ -429,34 +491,39 @@ void RTC_SetTime(uint8_t hour, uint8_t min, uint8_t sec)
 	if(min + utc_offset.minutes < 0){
 		new_min = 60 + min + utc_offset.minutes;
 		hour -= 1;
-		printf("min <0: %d \r\n", new_min);
+		//printf("min <0: %d \r\n", new_min);
 	}
 	else if(min + utc_offset.minutes > 59){
 		new_min =  min + utc_offset.minutes - 60;
 		hour += 1;
-		printf("min >59: %d \r\n", new_min);
+		//printf("min >59: %d \r\n", new_min);
 	}
 	else{
 		new_min = min + utc_offset.minutes;
-		printf("min 0-59: %d \r\n", new_min);
+		//printf("min 0-59: %d \r\n", new_min);
 	}
 
 	if(hour + utc_offset.hours < 0){
 		new_hour = 24 + hour + utc_offset.hours;
-		printf("hour <0: %d \r\n", new_hour);
+		//printf("hour <0: %d \r\n", new_hour);
 	}
 	else if(hour + utc_offset.hours > 23){
 		new_hour = hour + utc_offset.hours - 24;
-		printf("hour >23: %d \r\n", new_hour);
+		//printf("hour >23: %d \r\n", new_hour);
 	}
 	else{
 		new_hour = hour + utc_offset.hours;
-		printf("hour 0-23: %d \r\n", new_hour);
+		//printf("hour 0-23: %d \r\n", new_hour);
+	}
+
+	if(IsOneHourAdd) {
+		new_hour += 1;
 	}
 
 	sTime.Hours = new_hour;
 	sTime.Minutes = new_min;
 	sTime.Seconds = sec;
+	sTime.SubSeconds = 0;
 	sTime.TimeFormat = RTC_HOURFORMAT12_AM;
 	sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
 	sTime.StoreOperation = RTC_STOREOPERATION_RESET;
@@ -465,7 +532,7 @@ void RTC_SetTime(uint8_t hour, uint8_t min, uint8_t sec)
 		Error_Handler();
 	}
 
-	Print_UTC_Time(new_hour, new_min, sec);
+	//Print_UTC_Time(new_hour, new_min, sec);
 }
 
 void RTC_SetDate(uint8_t year, uint8_t month, uint8_t date, uint8_t day)
@@ -498,6 +565,7 @@ void Button_Init(void)
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(BTN_PORT, BTN_PIN, GPIO_PIN_RESET);
 
+
 	GPIO_InitStruct.Pin = BTN_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -506,6 +574,26 @@ void Button_Init(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM6){
+	}
+
+	if(htim->Instance == TIM7) {
+		if(gpsCheck == 30) {
+			Read_GPS(gps_buff, BUFF_SIZE);
+
+			if(strstr(gps_buff, "$GNRMC") != NULL){
+			  printf(gps_buff);
+			  Parse_GPGGA(gps_buff);
+			}
+
+			gpsCheck = 0;
+		} else {
+			gpsCheck++;
+		}
+	}
+}
+
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc) {
+	if(!inMenu) {
 		Show_Time();
 	}
 }
@@ -516,8 +604,6 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
 	for(int i=0; i < 2000; i++);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
 }
-
-
 
 void process_button_events(void)
 {
@@ -531,7 +617,7 @@ void process_button_events(void)
         // Button Press Detected
         button_press_time = HAL_GetTick();
         button_state = 1;
-        if ((button_press_time - last_press_time) < 300) {
+        if ((button_press_time - last_press_time) < 1000) {
             press_count++;
         } else {
             press_count = 1;
@@ -580,8 +666,6 @@ void _putchar(char character)
 {
 	while(!(USART2->ISR & UART_FLAG_TXE));
 	USART2->TDR = character & 0xFF;
-
-	//HAL_UART_Transmit(huart, pData, Size, Timeout);
 }
 
 /* USER CODE END 4 */
