@@ -1,8 +1,7 @@
 ﻿Designator,Footprint,Quantity,Value,LCSC Part #
 C2,0603,1,100n,
 D1,0603,1,LED,
+J1,JST_SUR_BM02B-SURS-TF_1x02-1MP_P0.80mm_Vertical,1,Conn_01x02_Socket,
 "Q1, Q2",SOT-23,2,BSS127S,
 R1,0603,1,2k,
-T1,TouchPad,1,~,
-"TP1, TP2, TP3, TP4, TP5",TestPoint_THTPad_D2.5mm_Drill1.2mm,5,TestPoint,
-U1,SOT-23-6,1,~,
+U1,SOT-23-6,1,TTP223,

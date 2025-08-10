@@ -176,6 +176,7 @@
 		(uuid "cb083aa1-9eb6-48f1-bd35-d1f53f30026b")
 	)
 	(model "/home/nicolas/Downloads/IN-12A_WLegs.step"
+		(hide yes)
 		(offset
 			(xyz 0 0 6.5)
 		)
