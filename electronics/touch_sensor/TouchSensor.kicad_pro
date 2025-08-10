@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.762,
-          "height": 1.524,
-          "width": 1.524
+          "drill": 1.2,
+          "height": 2.5,
+          "width": 2.5
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -525,7 +525,7 @@
       "plot": "Manufacturing/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "TouchSensor.step",
       "svg": "SVG/",
       "vrml": ""
     },
@@ -562,8 +562,8 @@
         },
         {
           "group_by": false,
-          "label": "Datasheet",
-          "name": "Datasheet",
+          "label": "LCSC_Part#",
+          "name": "LCSC_Part#",
           "show": true
         },
         {
@@ -574,9 +574,33 @@
         },
         {
           "group_by": false,
+          "label": "Datasheet",
+          "name": "Datasheet",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
           "label": "Qty",
           "name": "${QUANTITY}",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
         },
         {
           "group_by": true,
@@ -588,9 +612,9 @@
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": false,
-      "name": "Grouped By Value",
+      "name": "",
       "sort_asc": true,
-      "sort_field": "Reference"
+      "sort_field": "Footprint"
     },
     "connection_grid_size": 50.0,
     "drawing": {

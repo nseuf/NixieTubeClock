@@ -5,15 +5,26 @@
 	(uuid "70a77e62-e483-4421-8e55-bbb95bbcc263")
 	(paper "A4")
 	(lib_symbols
-		(symbol "Connector:Conn_01x03_Pin"
+		(symbol "Connector:TestPoint"
+			(pin_numbers
+				(hide yes)
+			)
 			(pin_names
-				(offset 1.016)
+				(offset 0.762)
 				(hide yes)
 			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "J"
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
 				(at 0 5.08 0)
 				(effects
 					(font
@@ -21,16 +32,8 @@
 					)
 				)
 			)
-			(property "Value" "Conn_01x03_Pin"
-				(at 0 -5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
 			(property "Footprint" ""
-				(at 0 0 0)
+				(at 5.08 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -39,6 +42,15 @@
 				)
 			)
 			(property "Datasheet" "~"
+				(at 5.08 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "test point"
 				(at 0 0 0)
 				(effects
 					(font
@@ -47,7 +59,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Generic connector, single row, 01x03, script generated"
+			(property "ki_keywords" "test point tp"
 				(at 0 0 0)
 				(effects
 					(font
@@ -56,15 +68,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "connector"
+			(property "ki_fp_filters" "Pin* Test*"
 				(at 0 0 0)
 				(effects
 					(font
@@ -73,89 +77,24 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Conn_01x03_Pin_1_1"
-				(rectangle
-					(start 0.8636 2.667)
-					(end 0 2.413)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
 					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 -2.413)
-					(end 0 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 2.54) (xy 0.8636 2.54)
-					)
-					(stroke
-						(width 0.1524)
+						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
 					)
 				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy 0.8636 0)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -2.54) (xy 0.8636 -2.54)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
+			)
+			(symbol "TestPoint_1_1"
 				(pin passive line
-					(at 5.08 2.54 180)
-					(length 3.81)
-					(name "Pin_1"
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -163,42 +102,6 @@
 						)
 					)
 					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 0 180)
-					(length 3.81)
-					(name "Pin_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 -2.54 180)
-					(length 3.81)
-					(name "Pin_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -348,6 +251,189 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:LED"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "LED"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Light emitting diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Sim.Pins" "1=K 2=A"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "LED diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "LED* LED_SMD:* LED_THT:*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "LED_0_1"
+				(polyline
+					(pts
+						(xy -3.048 -0.762) (xy -4.572 -2.286) (xy -3.81 -2.286) (xy -4.572 -2.286) (xy -4.572 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.778 -0.762) (xy -3.302 -2.286) (xy -2.54 -2.286) (xy -3.302 -2.286) (xy -3.302 -1.524)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -1.27) (xy -1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "LED_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:R"
 			(pin_numbers
 				(hide yes)
@@ -472,20 +558,23 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "TouchSensor:ELV1411A"
+		(symbol "Mechanical:MountingHole"
+			(pin_names
+				(offset 1.016)
+			)
 			(exclude_from_sim no)
-			(in_bom yes)
+			(in_bom no)
 			(on_board yes)
 			(property "Reference" "H"
-				(at 0 6.096 0)
+				(at 0 5.08 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Value" ""
-				(at 0 0 0)
+			(property "Value" "MountingHole"
+				(at 0 3.175 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -501,7 +590,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" ""
+			(property "Datasheet" "~"
 				(at 0 0 0)
 				(effects
 					(font
@@ -510,7 +599,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" ""
+			(property "Description" "Mounting Hole without connection"
 				(at 0 0 0)
 				(effects
 					(font
@@ -519,319 +608,34 @@
 					(hide yes)
 				)
 			)
-			(symbol "ELV1411A_0_1"
-				(rectangle
-					(start -6.35 5.08)
-					(end 6.35 -5.08)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_0_1"
+				(circle
+					(center 0 0)
+					(radius 1.27)
 					(stroke
-						(width 0)
+						(width 1.27)
 						(type default)
 					)
 					(fill
-						(type background)
-					)
-				)
-			)
-			(symbol "ELV1411A_1_1"
-				(pin passive line
-					(at -8.89 0 0)
-					(length 2.54)
-					(name "LRA+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -8.89 0 0)
-					(length 2.54)
-					(hide yes)
-					(name "LRA+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 8.89 2.54 180)
-					(length 2.54)
-					(name "LRA-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 8.89 2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "LRA-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "10"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "11"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "12"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "13"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "14"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "15"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "16"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 8.89 -2.54 180)
-					(length 2.54)
-					(hide yes)
-					(name "SHIELD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "9"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
+						(type none)
 					)
 				)
 			)
@@ -1684,23 +1488,13 @@
 	)
 	(wire
 		(pts
-			(xy 177.8 91.44) (xy 177.8 96.52)
+			(xy 175.26 91.44) (xy 175.26 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "0b52d8de-4d28-4def-9106-36cd405ff6a2")
-	)
-	(wire
-		(pts
-			(xy 127 92.71) (xy 140.97 92.71)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0d9ad31a-877b-4326-a4c6-7d65e841d237")
 	)
 	(wire
 		(pts
@@ -1724,13 +1518,23 @@
 	)
 	(wire
 		(pts
-			(xy 96.52 119.38) (xy 107.95 119.38)
+			(xy 90.17 119.38) (xy 101.6 119.38)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "1f9358c8-cebd-4624-9a65-2762dcf5e8b0")
+	)
+	(wire
+		(pts
+			(xy 227.33 90.17) (xy 227.33 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "206654fa-047d-4577-94a0-cf52a3bcedfc")
 	)
 	(wire
 		(pts
@@ -1744,13 +1548,13 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 92.71) (xy 256.54 92.71)
+			(xy 241.3 99.06) (xy 241.3 100.33)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2b9372e6-c790-4cda-a91d-73a2b6fa4e19")
+		(uuid "32b3612b-2586-4247-b417-cb0331b93de9")
 	)
 	(wire
 		(pts
@@ -1764,7 +1568,7 @@
 	)
 	(wire
 		(pts
-			(xy 214.63 90.17) (xy 219.71 90.17)
+			(xy 214.63 90.17) (xy 227.33 90.17)
 		)
 		(stroke
 			(width 0)
@@ -1804,7 +1608,7 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 87.63) (xy 241.3 100.33)
+			(xy 241.3 90.17) (xy 241.3 91.44)
 		)
 		(stroke
 			(width 0)
@@ -1844,6 +1648,16 @@
 	)
 	(wire
 		(pts
+			(xy 229.87 90.17) (xy 241.3 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7fcbb732-f059-447d-88e6-c8955b1bddca")
+	)
+	(wire
+		(pts
 			(xy 87.63 90.17) (xy 91.44 90.17)
 		)
 		(stroke
@@ -1874,6 +1688,16 @@
 	)
 	(wire
 		(pts
+			(xy 127 92.71) (xy 140.97 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8e3ec5f2-78d9-4a5b-b0cb-386e0249b344")
+	)
+	(wire
+		(pts
 			(xy 132.08 100.33) (xy 140.97 100.33)
 		)
 		(stroke
@@ -1894,16 +1718,6 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 87.63) (xy 241.3 87.63)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ab3e3af3-f140-4e49-8e84-f86dd313132d")
-	)
-	(wire
-		(pts
 			(xy 161.29 92.71) (xy 168.91 92.71)
 		)
 		(stroke
@@ -1914,13 +1728,13 @@
 	)
 	(wire
 		(pts
-			(xy 256.54 92.71) (xy 256.54 99.06)
+			(xy 229.87 90.17) (xy 229.87 87.63)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "bb6651bd-d4f4-413a-84c1-68614a815094")
+		(uuid "bb7d7aa4-1003-48d5-8e25-1366aac9a02e")
 	)
 	(wire
 		(pts
@@ -1951,16 +1765,6 @@
 			(type default)
 		)
 		(uuid "cc2a7ef3-5cd0-4270-a4e0-c652616ae8de")
-	)
-	(wire
-		(pts
-			(xy 177.8 96.52) (xy 175.26 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cf150185-3dd5-4ac8-a2b4-2a6c2677ad0e")
 	)
 	(wire
 		(pts
@@ -2053,7 +1857,7 @@
 		(uuid "2595b258-20e1-4178-9704-6dab7f62c498")
 	)
 	(label "Sens"
-		(at 107.95 119.38 180)
+		(at 101.6 119.38 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2127,6 +1931,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC_Part#" "C105576"
+			(at 214.63 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "e155ec74-2bf6-4185-a227-0c887b878269")
 		)
@@ -2198,6 +2010,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" "C154890"
+			(at 212.09 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -2312,7 +2132,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 176.2252 105.41 0)
 			(effects
 				(font
@@ -2337,6 +2157,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" "C1591"
+			(at 175.26 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "2"
@@ -2410,6 +2238,14 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" "C154890"
+			(at 238.76 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -2498,6 +2334,80 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 229.87 87.63 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp yes)
+		(uuid "58d69ffb-2362-46a5-afa2-51169fb7d1ba")
+		(property "Reference" "TP5"
+			(at 231.14 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 231.14 84.582 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.5mm_Drill1.2mm"
+			(at 234.95 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 234.95 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 229.87 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" ""
+			(at 229.87 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "9b63ea85-47b8-48dd-8891-2944c7070ac9")
+		)
+		(instances
+			(project ""
+				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
+					(reference "TP5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 91.44 97.79 0)
 		(unit 1)
@@ -2559,6 +2469,167 @@
 			(project ""
 				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
 					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 227.33 87.63 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp yes)
+		(uuid "5ccc05a9-d179-4a23-92c8-f8fa36e9d9d5")
+		(property "Reference" "TP4"
+			(at 222.504 82.296 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 217.17 84.328 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.5mm_Drill1.2mm"
+			(at 232.41 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 232.41 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 227.33 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" ""
+			(at 227.33 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "06818e6d-9e88-4882-8101-e32223523bef")
+		)
+		(instances
+			(project ""
+				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
+					(reference "TP4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED")
+		(at 241.3 95.25 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "68a3ec28-d5d2-4f06-8354-3b7143d25832")
+		(property "Reference" "D1"
+			(at 245.11 95.5674 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "LED"
+			(at 245.11 98.1074 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_0603_1608Metric"
+			(at 241.3 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 241.3 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Light emitting diode"
+			(at 241.3 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=K 2=A"
+			(at 241.3 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" "C5656657"
+			(at 241.3 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "6522cc4b-9881-48a9-85e1-1e5cf7974b7b")
+		)
+		(pin "2"
+			(uuid "a88e7395-ad49-454c-ae69-7fd1b55e87c3")
+		)
+		(instances
+			(project "TouchSensor"
+				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -2698,33 +2769,35 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Conn_01x03_Pin")
-		(at 82.55 92.71 0)
+		(lib_id "Mechanical:MountingHole")
+		(at 120.65 152.4 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "76aded2c-04fe-4fed-acc7-b56b3ae1eec8")
-		(property "Reference" "J1"
-			(at 83.185 85.09 0)
+		(uuid "912e1b48-37eb-4408-813e-3add8db4d912")
+		(property "Reference" "H2"
+			(at 123.19 151.1299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
-		(property "Value" "Conn_01x03_Pin"
-			(at 83.185 87.63 0)
+		(property "Value" "MountingHole"
+			(at 123.19 153.6699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Molex:Molex_PicoBlade_53261-0371_1x03-1MP_P1.25mm_Horizontal"
-			(at 82.55 92.71 0)
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_ISO7380"
+			(at 120.65 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2733,7 +2806,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 82.55 92.71 0)
+			(at 120.65 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2741,8 +2814,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x03, script generated"
-			(at 82.55 92.71 0)
+		(property "Description" "Mounting Hole without connection"
+			(at 120.65 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2750,19 +2823,18 @@
 				(hide yes)
 			)
 		)
-		(pin "2"
-			(uuid "7a1de28e-0fba-4284-9a58-9775913370a5")
-		)
-		(pin "1"
-			(uuid "bc84f082-6b56-4de3-8eb6-b8129c4e0b74")
-		)
-		(pin "3"
-			(uuid "4cb873fd-4187-4617-938f-e29a9225f851")
+		(property "LCSC_Part#" ""
+			(at 120.65 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(instances
 			(project ""
 				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
-					(reference "J1")
+					(reference "H2")
 					(unit 1)
 				)
 			)
@@ -2770,15 +2842,15 @@
 	)
 	(symbol
 		(lib_id "TouchSensor:Touch_Pad")
-		(at 86.36 119.38 180)
+		(at 80.01 119.38 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "9690c734-b55f-4cb7-a910-ce0f85bc1fc2")
 		(property "Reference" "T1"
-			(at 86.36 110.236 0)
+			(at 80.01 110.236 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2786,7 +2858,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 86.36 110.49 0)
+			(at 80.01 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2794,7 +2866,7 @@
 			)
 		)
 		(property "Footprint" "TouchSensor:TouchPad"
-			(at 86.36 119.38 0)
+			(at 80.01 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2803,7 +2875,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 86.36 119.38 0)
+			(at 80.01 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2812,12 +2884,20 @@
 			)
 		)
 		(property "Description" ""
-			(at 86.36 119.38 0)
+			(at 80.01 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" ""
+			(at 80.01 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(pin "1"
@@ -2833,41 +2913,32 @@
 		)
 	)
 	(symbol
-		(lib_id "TouchSensor:ELV1411A")
-		(at 228.6 90.17 0)
+		(lib_id "Connector:TestPoint")
+		(at 87.63 92.71 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
-		(uuid "9cb71ecf-d2c9-4e0d-995a-c1f5e3cf933f")
-		(property "Reference" "H1"
-			(at 228.6 83.566 0)
+		(dnp yes)
+		(uuid "98d6035d-9cc5-4dbb-83c9-9f5188639de5")
+		(property "Reference" "TP2"
+			(at 70.104 92.71 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "~"
-			(at 228.6 83.82 0)
+		(property "Value" "TestPoint"
+			(at 77.216 92.71 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "TouchSensor:ELV1411A"
-			(at 228.6 90.17 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 228.6 90.17 0)
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.5mm_Drill1.2mm"
+			(at 87.63 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2875,8 +2946,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
-			(at 228.6 90.17 0)
+		(property "Datasheet" "~"
+			(at 87.63 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2884,58 +2955,102 @@
 				(hide yes)
 			)
 		)
-		(pin "3"
-			(uuid "c6ac254b-1412-4993-9b9d-a5fa61161f3b")
+		(property "Description" "test point"
+			(at 87.63 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" ""
+			(at 87.63 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "1"
-			(uuid "b36cb70c-cf85-4031-a087-04f051e39fd4")
-		)
-		(pin "2"
-			(uuid "112d4688-bbf7-4682-9bd7-8e4871ef2fb0")
-		)
-		(pin "8"
-			(uuid "1b24aa0d-00e0-4c8d-846e-bb11002ea24a")
-		)
-		(pin "4"
-			(uuid "508b8ed3-6952-448f-a025-b459a24ac04e")
-		)
-		(pin "7"
-			(uuid "fedb18ed-7a17-46a3-b92c-44841cf1fd45")
-		)
-		(pin "10"
-			(uuid "7d35248f-e286-4741-b898-5e3cc4e3af35")
-		)
-		(pin "15"
-			(uuid "29a8b74a-0d4c-4ad2-a717-3c2a7092334c")
-		)
-		(pin "14"
-			(uuid "4e0d5f29-11c9-419a-ad3e-000dfceba72a")
-		)
-		(pin "5"
-			(uuid "bdb3b862-ac8a-47ef-9834-dd54a1ea5863")
-		)
-		(pin "13"
-			(uuid "aeeca4f1-286c-402f-b194-4c25fd5a119d")
-		)
-		(pin "12"
-			(uuid "b8564784-93cc-426c-899d-42f5a72e3046")
-		)
-		(pin "11"
-			(uuid "0f6c12cc-8109-4cc2-843a-1b55b47956bd")
-		)
-		(pin "16"
-			(uuid "7194ad2c-fdca-47b9-b7d1-02e1d7685566")
-		)
-		(pin "9"
-			(uuid "3813a2a4-ec41-4b09-9747-d6876feeb371")
-		)
-		(pin "6"
-			(uuid "0fdfca2b-9fec-4533-b81e-c643ca1a207f")
+			(uuid "4b91cf9f-de98-4170-88d1-f676bcd7b415")
 		)
 		(instances
 			(project ""
 				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
-					(reference "H1")
+					(reference "TP2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 87.63 95.25 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp yes)
+		(uuid "b155e157-403c-4242-985b-ad68e56e3641")
+		(property "Reference" "TP3"
+			(at 70.104 95.25 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 77.216 95.25 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.5mm_Drill1.2mm"
+			(at 87.63 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 87.63 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 87.63 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" ""
+			(at 87.63 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "78c672b1-dfd6-4044-93df-0ad90c71a64d")
+		)
+		(instances
+			(project ""
+				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
+					(reference "TP3")
 					(unit 1)
 				)
 			)
@@ -3025,7 +3140,7 @@
 				)
 			)
 		)
-		(property "Value" "~"
+		(property "Value" "TTP223"
 			(at 151.13 88.9 0)
 			(effects
 				(font
@@ -3060,6 +3175,14 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC_Part#" "C42422127"
+			(at 151.13 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "5"
 			(uuid "e652bfec-a6a3-4810-bbd1-e0ab8fab78c8")
 		)
@@ -3089,7 +3212,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 177.8 91.44 0)
+		(at 175.26 91.44 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3098,7 +3221,7 @@
 		(fields_autoplaced yes)
 		(uuid "c14f2fb9-9770-4729-9f25-a910f9e7679b")
 		(property "Reference" "#PWR04"
-			(at 177.8 95.25 0)
+			(at 175.26 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3107,7 +3230,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 177.8 86.36 0)
+			(at 175.26 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3115,7 +3238,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 177.8 91.44 0)
+			(at 175.26 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3124,7 +3247,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 177.8 91.44 0)
+			(at 175.26 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3133,7 +3256,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 177.8 91.44 0)
+			(at 175.26 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3154,17 +3277,104 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 256.54 99.06 0)
+		(lib_id "Mechanical:MountingHole")
+		(at 120.65 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c3c54f26-a6fd-4b7d-981b-b6dae98bcf89")
+		(property "Reference" "H1"
+			(at 123.19 143.5099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 123.19 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_ISO7380"
+			(at 120.65 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 120.65 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole without connection"
+			(at 120.65 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC_Part#" ""
+			(at 120.65 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project ""
+				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 87.63 90.17 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d8d61aa6-3043-428a-b87b-80cb88a7a71f")
-		(property "Reference" "#PWR08"
-			(at 256.54 105.41 0)
+		(dnp yes)
+		(uuid "e55625d0-9a67-49f3-8cd3-d547c1026799")
+		(property "Reference" "TP1"
+			(at 70.104 90.424 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 77.216 90.424 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_THTPad_D2.5mm_Drill1.2mm"
+			(at 87.63 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3172,8 +3382,8 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
-			(at 256.54 104.14 0)
+		(property "Datasheet" "~"
+			(at 87.63 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3181,8 +3391,8 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
-			(at 256.54 99.06 0)
+		(property "Description" "test point"
+			(at 87.63 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3190,31 +3400,21 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
-			(at 256.54 99.06 0)
+		(property "LCSC_Part#" ""
+			(at 87.63 90.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 256.54 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
 			)
 		)
 		(pin "1"
-			(uuid "f781bc08-7b6f-4d34-82e5-198ce594b3a4")
+			(uuid "1e49e347-7008-4bd8-84bb-a0577336afb5")
 		)
 		(instances
-			(project "TouchSensor"
+			(project ""
 				(path "/70a77e62-e483-4421-8e55-bbb95bbcc263"
-					(reference "#PWR08")
+					(reference "TP1")
 					(unit 1)
 				)
 			)

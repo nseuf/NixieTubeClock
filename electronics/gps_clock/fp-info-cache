@@ -1,4 +1,4 @@
-24207591505658944
+24214548108133805
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -65240,6 +65240,20 @@ Yellow 5381 Series LED
 2
 2
 Library
+BAT-SMD_BS-CR2032-8
+
+
+0
+2
+2
+Library
+BAT-SMD_MY-1220-03
+
+
+0
+3
+3
+Library
 CD-PA1616D_ADA
 
 5186 
@@ -65267,6 +65281,20 @@ MS518SE-FL35E
 0
 2
 2
+Library
+TU10-F
+
+
+0
+12
+12
+Library
+USB-C-SMD_U263-241N-4BQC02
+
+
+0
+28
+28
 Library
 WE-PD_1210
 <b> WE-PD SMD Power Inductor<br></b><br>Size: 1210, SMT, 2pins<br>LxWxH=12x12x10mm

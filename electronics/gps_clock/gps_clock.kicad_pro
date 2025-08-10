@@ -56,6 +56,11 @@
           "gap": 0.0,
           "via_gap": 0.0,
           "width": 0.0
+        },
+        {
+          "gap": 0.15,
+          "via_gap": 0.5,
+          "width": 0.22
         }
       ],
       "drc_exclusions": [],
@@ -179,6 +184,7 @@
       ],
       "track_widths": [
         0.0,
+        0.2,
         0.3,
         0.5,
         1.0
@@ -217,6 +223,10 @@
         {
           "diameter": 0.7,
           "drill": 0.3
+        },
+        {
+          "diameter": 0.9,
+          "drill": 0.4
         }
       ],
       "zones_allow_external_fillets": false
@@ -489,7 +499,7 @@
       "plot": "/home/nicolas/Documents/kicad/clock/manufacturing/",
       "pos_files": "/home/nicolas/Documents/kicad/clock/manufacturing/",
       "specctra_dsn": "gps_clock.dsn",
-      "step": "",
+      "step": "gps_clock.step",
       "svg": "",
       "vrml": ""
     },
