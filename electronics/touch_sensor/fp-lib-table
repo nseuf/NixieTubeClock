@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "TouchSensor")(type "KiCad")(uri "${KIPRJMOD}/TouchSensor.pretty")(options "")(descr ""))
+)

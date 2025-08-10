@@ -1,0 +1,98 @@
+(footprint "MS518SE-FL35E"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at -2 -0.25 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "a2b4be55-a6d4-4c33-9619-923704378f8a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "MS518SE-FL35E"
+		(at 0.5 -2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "c1062b58-b50c-4864-8a34-ae7b38c2c919")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d1cc31c3-b1b4-4568-bebf-69d78504b81c")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0af31733-c7cd-4fd9-9293-2107b47aa2b2")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "fb6eeea9-a0a0-46d5-b7f0-0ca56f2e37ef")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_text user "${REFERENCE}"
+		(at 2.25 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "336f25df-2073-43ca-a3ba-36ef68502827")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at 2.25 -0.75)
+		(size 3 1)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "f21c98e4-45c6-49bf-b65c-1fd867afd3fa")
+	)
+	(pad "2" smd roundrect
+		(at 2.25 0.75)
+		(size 3 1)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "886121f1-c3b0-40e5-87bb-aad5bdf6d418")
+	)
+)
