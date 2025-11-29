@@ -68,7 +68,7 @@ void DisplayDigits(uint8_t dig1, uint8_t dig2, uint8_t dig3, uint8_t dig4, uint8
 
 
 void Show_UTC(uint8_t utc_num);
-
+void JackpotClean(void);
 void Read_GPS(char *buff, uint8_t size);
 void Parse_GPGGA(char *sentence);
 void Print_UTC_Time(uint8_t hour, uint8_t minute, uint8_t second);

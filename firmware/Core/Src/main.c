@@ -66,20 +66,7 @@ bool IsOneHourAdd = false;
 
 #define BTN_PIN			GPIO_PIN_0
 #define BTN_PORT		GPIOC
-typedef struct
-{
-    union {
-        struct {
-            uint16_t min_d0:10;
-            uint16_t min_d1:10;
 
-            uint16_t hour_d0:10;
-            uint16_t hour_d1:10;
-
-        } time_parts;
-        uint8_t all_time[5];
-    };
-} TimeStruct;
 
 TimeOffset utc_offset ={0};
 uint8_t UTC_Constant = 0;
@@ -93,7 +80,6 @@ uint32_t last_press_time = 0;
 uint8_t press_count = 0;
 uint8_t button_state = 0;
 uint8_t gpsCheck = 0;
-uint8_t lastGpsCheck = 0;
 uint8_t long_press_detected = 0;
 bool Format24Flag = true;
 bool DSTFlag = false;
@@ -105,7 +91,8 @@ int rtc_stage = -1;
 char gps_buff[BUFF_SIZE];
 
 
-
+//Takes the current status of the button, which is determined by the process_button_events() function,
+//and provides functionality for the button and its different presses
 void Update_Changes(int btn_status)
 {
 #if DEBUG==1
@@ -114,30 +101,29 @@ void Update_Changes(int btn_status)
 	else if(btn_status == 3)	{	printf("Button Pressed: for 5 seconds\r\n");}
 #endif
 
+	//Single press changes between 12 and 24 hour time
 	if(btn_status == 1){
 		Is12HourEnabled = !Is12HourEnabled;
 	}
+	//Double tap changes between daylight savings time
 	else if(btn_status == 2){
 		IsOneHourAdd = !IsOneHourAdd;
 		if(IsOneHourAdd == true){
 			HAL_RTC_DST_Add1Hour(&hrtc);
-		}else{
+		} else {
 			HAL_RTC_DST_Sub1Hour(&hrtc);
 		}
 	}
+	//Holding the button for 5 seconds allows someone to change their UTC offsets
 	else if(btn_status == 3){
 		uint8_t utc_set_state = 0, button_state;
 		uint32_t utc_ms_count = 0;
 		uint8_t menuOpen = 0;
 		inMenu = true;
 
-		HAL_TIM_Base_Stop_IT(&htim6);
-
 		while(utc_set_state < 10){
 			switch(utc_set_state){
 				case 0:
-					HAL_TIM_Base_Stop_IT(&htim6);
-					__HAL_TIM_SET_COUNTER(&htim6, 0);
 					utc_ms_count = HAL_GetTick();
 					utc_set_state = 1;
 					Show_UTC(UTC_Constant);
@@ -146,6 +132,8 @@ void Update_Changes(int btn_status)
 				case 1:
 					button_state = HAL_GPIO_ReadPin(BTN_PORT, BTN_PIN);
 					if(button_state == GPIO_PIN_RESET){
+						//Provides a barrier before it allows the offset to change, if this wasn't here it would
+						//add one to the offset as soon as someone got into the menu
 						if(menuOpen == 1) {
 							if(UTC_Constant >= 38)	UTC_Constant = 1;
 							else					UTC_Constant++;
@@ -157,6 +145,9 @@ void Update_Changes(int btn_status)
 						utc_ms_count = HAL_GetTick();
 						Show_UTC(UTC_Constant);
 						menuOpen = 1;
+
+						//This barrier makes sure the program doesn't loop and add to the offset while someone is
+						//holding their finger on the button
 						while(button_state == HAL_GPIO_ReadPin(BTN_PORT, BTN_PIN));
 					}
 
@@ -165,6 +156,9 @@ void Update_Changes(int btn_status)
 						#if DEBUG == 1
 						printf("utc success: %d \r\n",UTC_Constant);
 						#endif
+
+						//Fills the gps buffer with zeros, if the gps doesn't get a new reading it won't
+						//use the previous time
 						memset(gps_buff, 0, BUFF_SIZE);
 					}
 					break;
@@ -176,9 +170,9 @@ void Update_Changes(int btn_status)
 						utc_set_state = 20;
 					}
 
+					//Adds the new offset to a backup register, this allows the offset to remain in the register even when power is lost
 				    HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, UTC_Constant);
 
-					HAL_TIM_Base_Start_IT(&htim6);
 					inMenu = false;
 					break;
 
@@ -279,7 +273,6 @@ int main(void)
   MX_DMA_Init();
   MX_RTC_Init();
   MX_SPI1_Init();
-  MX_TIM6_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_TIM7_Init();
@@ -317,7 +310,6 @@ int main(void)
 	  		  break;
 
 	  	  case 1:
-	  		  HAL_TIM_Base_Start_IT(&htim6);
 	  		  HAL_TIM_Base_Start_IT(&htim7);
 
 	  		  rtc_stage = 2;
@@ -333,16 +325,9 @@ int main(void)
 			  }
 #endif
 
-			  /*if(myTime.Seconds == 00) {
-				  lastGpsCheck = gpsCheck;
-
-				  uint8_t tubeNum[10] = {1, 2, 5, 4, 8, 3, 9, 0, 7, 6};
-
-				  for(int i = 0; i < 10; i++) {
-					  DisplayDigits(tubeNum[i], tubeNum[i], tubeNum[i], tubeNum[i], tubeNum[i], tubeNum[i]);
-					  HAL_Delay(100);
-				  }
-			  }*/
+			  if(myTime.Minutes == 00 && myTime.Seconds == 00) {
+				  JackpotClean();
+			  }
 
 	  		  process_button_events();
 	  		  Update_Changes(status);
@@ -412,6 +397,63 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void JackpotClean(void) {
+	inMenu = true;
+
+	uint8_t current[6] = {0,0,0,0,0,0};  // current displayed digits
+	uint8_t spinning[6] = {1,1,1,1,1,1}; // 1 = still spinning, 0 = finished
+	uint8_t new_hour = 0;
+
+	const uint16_t spinDelay = 70; // ms speed of random spin
+	uint32_t start = HAL_GetTick();
+
+	// Total spin duration per tube
+	uint16_t spinTime[6] = {5000, 5200, 5400, 5600, 5800, 6000};
+
+	while (1) {
+	  uint32_t now = HAL_GetTick();
+	  int allDone = 1;
+
+	  for (int t = 0; t < 6; t++) {
+		  if (spinning[t]) {
+			  allDone = 0;
+
+			  // still spinning — show random digit
+			  current[t] = rand() % 10;
+
+			  // stop condition: spin duration reached
+			  if (now - start >= spinTime[t]) {
+				  new_hour = myTime.Hours;
+				  if(Is12HourEnabled) {
+					  if(new_hour > 12)
+						  new_hour = new_hour - 12;
+					  if(new_hour == 0)
+						  new_hour = 12;
+				  }
+
+				  // Target digits
+				  uint8_t target[6] = {new_hour / 10, new_hour % 10, 0, 0, 0, 6};
+
+				  spinning[t] = 0;
+				  current[t] = target[t]; // land on correct digit
+			  }
+		  }
+	  }
+
+	  // Display the 6 digits
+	  DisplayDigits(current[0], current[1], current[2],
+					current[3], current[4], current[5]);
+
+	  HAL_Delay(spinDelay);
+
+	  if (allDone)
+		  break;
+	}
+
+	inMenu = false;
+	Show_Time();
+}
+
 
 void Read_GPS(char *buff, uint8_t size)
 {
@@ -470,6 +512,7 @@ void Parse_GPGGA(char *sentence)
 
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 1);
 	} else {
+		//Turn off led when no gps signal
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, 0);
 	}
 	//Update_Changes(0);*/
@@ -481,6 +524,7 @@ void Print_UTC_Time(uint8_t hour, uint8_t minute, uint8_t second) {
     HAL_UART_Transmit(&huart2, (uint8_t*)time_str, strlen(time_str), 100);
 }
 
+//Takes UTC time from the GPS to set the RTC
 void RTC_SetTime(uint8_t hour, uint8_t min, uint8_t sec)
 {
 	RTC_TimeTypeDef sTime;
@@ -548,7 +592,6 @@ void RTC_SetDate(uint8_t year, uint8_t month, uint8_t date, uint8_t day)
 	{
 		Error_Handler();
 	}
-	//HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, PROTECTION_KEY);  // backup register
 }
 
 void Button_Init(void)
@@ -573,11 +616,10 @@ void Button_Init(void)
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-	if(htim->Instance == TIM6){
-	}
+	static int8_t timeElapsed = 5;
 
 	if(htim->Instance == TIM7) {
-		if(gpsCheck == 30) {
+		if(gpsCheck == timeElapsed) {
 			Read_GPS(gps_buff, BUFF_SIZE);
 
 			if(strstr(gps_buff, "$GNRMC") != NULL){
@@ -592,6 +634,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	}
 }
 
+//In rtc.c by setting the alarm such that the alarm mask has RTC_ALARMMASK_ALL set the alarm will trigger every second
+//This allows for a good display driver that is bound to the rtc, rather than using a timer
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc) {
 	if(!inMenu) {
 		Show_Time();
@@ -600,8 +644,6 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc) {
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 1);
-	//HAL_Delay(1);
-	for(int i=0; i < 2000; i++);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, 0);
 }
 
