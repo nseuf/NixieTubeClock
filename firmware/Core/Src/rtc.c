@@ -64,7 +64,7 @@ void MX_RTC_Init(void)
 
   /** Initialize RTC and set the Time and Date
   */
-  sTime.Hours = 0;
+  /*sTime.Hours = 0;
   sTime.Minutes = 0;
   sTime.Seconds = 0;
   sTime.SubSeconds = 0;
@@ -82,7 +82,7 @@ void MX_RTC_Init(void)
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
   {
     Error_Handler();
-  }
+  }*/
 
   /** Enable the Alarm A
   */

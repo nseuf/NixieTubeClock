@@ -101,18 +101,18 @@ void Update_Changes(int btn_status)
 	else if(btn_status == 3)	{	printf("Button Pressed: for 5 seconds\r\n");}
 #endif
 
-	//Single press changes between 12 and 24 hour time
+	//Single press changes between daylight savings time
 	if(btn_status == 1){
-		Is12HourEnabled = !Is12HourEnabled;
-	}
-	//Double tap changes between daylight savings time
-	else if(btn_status == 2){
 		IsOneHourAdd = !IsOneHourAdd;
 		if(IsOneHourAdd == true){
 			HAL_RTC_DST_Add1Hour(&hrtc);
 		} else {
 			HAL_RTC_DST_Sub1Hour(&hrtc);
 		}
+	}
+	//Double tap changes between 12 and 24 hour time
+	else if(btn_status == 2){
+		Is12HourEnabled = !Is12HourEnabled;
 	}
 	//Holding the button for 5 seconds allows someone to change their UTC offsets
 	else if(btn_status == 3){
@@ -400,54 +400,60 @@ void SystemClock_Config(void)
 void JackpotClean(void) {
 	inMenu = true;
 
-	uint8_t current[6] = {0,0,0,0,0,0};  // current displayed digits
-	uint8_t spinning[6] = {1,1,1,1,1,1}; // 1 = still spinning, 0 = finished
-	uint8_t new_hour = 0;
+	uint8_t currentDigit[6] = {0,0,0,0,0,0};  // current displayed digits
+	uint8_t hour = 0;
+	uint8_t minute = 0;
+	uint8_t second = 0;
 
 	const uint16_t spinDelay = 70; // ms speed of random spin
 	uint32_t start = HAL_GetTick();
 
 	// Total spin duration per tube
-	uint16_t spinTime[6] = {5000, 5200, 5400, 5600, 5800, 6000};
+	uint16_t spinTimeStart[6] = {0, 200, 400, 600, 800, 1000};
+	uint16_t spinTimeEnd[6] = {6000, 6200, 6400, 6600, 6800, 7000};
 
 	while (1) {
-	  uint32_t now = HAL_GetTick();
-	  int allDone = 1;
+		uint32_t current = HAL_GetTick();
+		int complete = 1;
 
-	  for (int t = 0; t < 6; t++) {
-		  if (spinning[t]) {
-			  allDone = 0;
+		HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
+		HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
 
-			  // still spinning — show random digit
-			  current[t] = rand() % 10;
+		hour = myTime.Hours;
+		if(Is12HourEnabled) {
+		  if (hour > 12)
+			  hour = hour - 12;
+		  if(hour == 0)
+			  hour = 12;
+		}
 
-			  // stop condition: spin duration reached
-			  if (now - start >= spinTime[t]) {
-				  new_hour = myTime.Hours;
-				  if(Is12HourEnabled) {
-					  if(new_hour > 12)
-						  new_hour = new_hour - 12;
-					  if(new_hour == 0)
-						  new_hour = 12;
-				  }
+		minute = myTime.Minutes;
+		second = myTime.Seconds;
 
-				  // Target digits
-				  uint8_t target[6] = {new_hour / 10, new_hour % 10, 0, 0, 0, 6};
+		// Target digits
+		uint8_t target[6] = {hour / 10, hour % 10, minute / 10, minute % 10, second / 10, second % 10};
 
-				  spinning[t] = 0;
-				  current[t] = target[t]; // land on correct digit
-			  }
-		  }
-	  }
+		for (int i = 0; i < 6; i++) {
+			if (current - start >= spinTimeStart[i] && current - start < spinTimeEnd[i]) {
+				complete = 0;
 
-	  // Display the 6 digits
-	  DisplayDigits(current[0], current[1], current[2],
-					current[3], current[4], current[5]);
+				currentDigit[i] = rand() % 10;
+			} else if (current - start >= spinTimeEnd[i]) {
+				complete = 1;
 
-	  HAL_Delay(spinDelay);
+				currentDigit[i] = target[i]; // land on correct digit
+			} else {
+				currentDigit[i] = target[i]; // land on correct digit
+			}
+		}
 
-	  if (allDone)
-		  break;
+		// Display the 6 digits
+		DisplayDigits(currentDigit[0], currentDigit[1], currentDigit[2],
+				currentDigit[3], currentDigit[4], currentDigit[5]);
+
+		HAL_Delay(spinDelay);
+
+		if (complete) break;
 	}
 
 	inMenu = false;
