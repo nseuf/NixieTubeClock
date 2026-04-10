@@ -57,7 +57,7 @@ void SystemClock_Config(void);
 RTC_TimeTypeDef myTime;
 RTC_DateTypeDef myDate;
 bool Is12HourEnabled = false;
-bool IsOneHourAdd = false;
+bool IsDST = false;
 
 /* USER CODE END PFP */
 
@@ -68,7 +68,6 @@ bool IsOneHourAdd = false;
 #define BTN_PORT		GPIOC
 
 
-TimeOffset utc_offset ={0};
 uint8_t UTC_Constant = 0;
 
 int8_t status = 0;
@@ -81,11 +80,12 @@ uint8_t press_count = 0;
 uint8_t button_state = 0;
 uint8_t gpsCheck = 0;
 uint8_t long_press_detected = 0;
-bool Format24Flag = true;
-bool DSTFlag = false;
-bool isDMA = false;
 bool inMenu = false;
 int rtc_stage = -1;
+static int lastCleanTime = -1;
+
+static TimeOffset utcOffset;
+int offsetMinutes;
 
 #define BUFF_SIZE 100
 char gps_buff[BUFF_SIZE];
@@ -103,16 +103,13 @@ void Update_Changes(int btn_status)
 
 	//Single press changes between daylight savings time
 	if(btn_status == 1){
-		IsOneHourAdd = !IsOneHourAdd;
-		if(IsOneHourAdd == true){
-			HAL_RTC_DST_Add1Hour(&hrtc);
-		} else {
-			HAL_RTC_DST_Sub1Hour(&hrtc);
-		}
+		IsDST = !IsDST;
+		BackupSettings();
 	}
 	//Double tap changes between 12 and 24 hour time
 	else if(btn_status == 2){
 		Is12HourEnabled = !Is12HourEnabled;
+		BackupSettings();
 	}
 	//Holding the button for 5 seconds allows someone to change their UTC offsets
 	else if(btn_status == 3){
@@ -153,6 +150,8 @@ void Update_Changes(int btn_status)
 
 					if(HAL_GetTick()-utc_ms_count > 5000){
 						utc_set_state = 2;
+
+						Update_Timezone();
 						#if DEBUG == 1
 						printf("utc success: %d \r\n",UTC_Constant);
 						#endif
@@ -170,8 +169,7 @@ void Update_Changes(int btn_status)
 						utc_set_state = 20;
 					}
 
-					//Adds the new offset to a backup register, this allows the offset to remain in the register even when power is lost
-				    HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, UTC_Constant);
+					BackupSettings();
 
 					inMenu = false;
 					break;
@@ -181,6 +179,17 @@ void Update_Changes(int btn_status)
 
 		}
 	}
+}
+
+void BackupSettings(void) {
+	//Adds the new offset to a backup register, this allows the offset to remain in the register even when power is lost
+	uint32_t backup = 0;
+
+	backup = UTC_Constant << 2;
+    backup |= ((IsDST ? 1 : 0) << 1);
+    backup |= (Is12HourEnabled ? 1 : 0);
+
+	HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0, backup);
 }
 
 
@@ -193,24 +202,49 @@ void Show_UTC(uint8_t utc_num)
 #endif
 }
 
-void Show_Time(void)
-{
-	uint8_t new_hour=0;
+Time GetLocalTime (void) {
+	uint8_t newHour = -1;
+	uint8_t newMin = -1;
+
 	HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
 
 	//myTime.Seconds = 12; myTime.Minutes = 59; myTime.Hours = 06;
-	Print_UTC_Time(myTime.Hours, myTime.Minutes, myTime.Seconds);
+	//Print_UTC_Time(myTime.Hours, myTime.Minutes, myTime.Seconds);
 
-	new_hour = myTime.Hours;
+	int utcTotal = myTime.Hours * 60 + myTime.Minutes;
+
+	int timeOffset = utcOffset.hours * 60 + utcOffset.minutes;
+
+	if(IsDST) timeOffset += 60;
+
+	int localTotal = utcTotal + timeOffset;
+
+	if (localTotal < 0) localTotal += 1440;
+	if (localTotal >= 1440) localTotal -= 1440;
+
+	newHour = localTotal / 60;
+	newMin = localTotal % 60;
+
 	if(Is12HourEnabled){
-		if(new_hour > 12)
-			new_hour = new_hour - 12;
-		 if(new_hour == 0)
-			new_hour = 12;
+		if(newHour > 12)
+			newHour = newHour - 12;
+		 if(newHour == 0)
+			 newHour = 12;
 	}
 
-	DisplayDigits(new_hour/10, new_hour%10, myTime.Minutes/10, myTime.Minutes%10, myTime.Seconds/10, myTime.Seconds%10);
+	Time localTime = {newHour, newMin, myTime.Seconds};
+
+	return localTime;
+}
+
+void Show_Time(void)
+{
+	Time localTime = GetLocalTime();
+
+	DisplayDigits(localTime.hours/10, localTime.hours%10,
+				  localTime.minutes/10, localTime.minutes%10,
+				  localTime.seconds/10, localTime.seconds%10);
 }
 
 void DisplayDigits(uint8_t hour1, uint8_t hour2, uint8_t min3, uint8_t min4, uint8_t sec5, uint8_t sec6) {
@@ -283,7 +317,14 @@ int main(void)
    printf(">> Program starts... \r\n");
 
    if(HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0) != 0x00) {
-	   UTC_Constant = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0);
+	   uint32_t backup = HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR0);
+
+	   IsDST = backup & 10;
+	   Is12HourEnabled = backup & 01;
+
+	   UTC_Constant = backup >> 2;
+
+	   Update_Timezone();
    }
 
   /* USER CODE END 2 */
@@ -325,8 +366,14 @@ int main(void)
 			  }
 #endif
 
-			  if(myTime.Minutes == 00 && myTime.Seconds == 00) {
-				  JackpotClean();
+			  int currentTime = myTime.Hours * 60 + myTime.Minutes;
+
+			  if(currentTime != lastCleanTime && myTime.Seconds == 0) {
+				  if ((myTime.Minutes % 15) == 0) {
+					  //printf("%d,%d\n", myTime.Minutes, myTime.Seconds);
+					  lastCleanTime = currentTime;
+					  JackpotClean();
+				  }
 			  }
 
 	  		  process_button_events();
@@ -405,30 +452,24 @@ void JackpotClean(void) {
 	uint8_t minute = 0;
 	uint8_t second = 0;
 
-	const uint16_t spinDelay = 70; // ms speed of random spin
+	const uint16_t spinDelay = 50; // ms speed of random spin
+	const uint16_t cycle[10] = {0,5,2,3,9,8,7,1,4,6};
+	uint8_t cycleCount = 0;
 	uint32_t start = HAL_GetTick();
 
 	// Total spin duration per tube
-	uint16_t spinTimeStart[6] = {0, 200, 400, 600, 800, 1000};
-	uint16_t spinTimeEnd[6] = {6000, 6200, 6400, 6600, 6800, 7000};
+	uint16_t spinTimeStart[6] = {0, 1000, 2000, 3000, 4000, 5000};
+	uint16_t spinTimeEnd[6] = {1000, 2000, 3000, 4000, 5000, 6000};
 
 	while (1) {
 		uint32_t current = HAL_GetTick();
 		int complete = 1;
 
-		HAL_RTC_GetTime(&hrtc, &myTime, RTC_FORMAT_BIN);
-		HAL_RTC_GetDate(&hrtc, &myDate, RTC_FORMAT_BIN);
+		Time localTime = GetLocalTime();
 
-		hour = myTime.Hours;
-		if(Is12HourEnabled) {
-		  if (hour > 12)
-			  hour = hour - 12;
-		  if(hour == 0)
-			  hour = 12;
-		}
-
-		minute = myTime.Minutes;
-		second = myTime.Seconds;
+		hour = localTime.hours;
+		minute = localTime.minutes;
+		second = localTime.seconds;
 
 		// Target digits
 		uint8_t target[6] = {hour / 10, hour % 10, minute / 10, minute % 10, second / 10, second % 10};
@@ -437,7 +478,7 @@ void JackpotClean(void) {
 			if (current - start >= spinTimeStart[i] && current - start < spinTimeEnd[i]) {
 				complete = 0;
 
-				currentDigit[i] = rand() % 10;
+				currentDigit[i] = cycle[cycleCount % 10];
 			} else if (current - start >= spinTimeEnd[i]) {
 				complete = 1;
 
@@ -452,6 +493,8 @@ void JackpotClean(void) {
 				currentDigit[3], currentDigit[4], currentDigit[5]);
 
 		HAL_Delay(spinDelay);
+
+		cycleCount++;
 
 		if (complete) break;
 	}
@@ -530,48 +573,18 @@ void Print_UTC_Time(uint8_t hour, uint8_t minute, uint8_t second) {
     HAL_UART_Transmit(&huart2, (uint8_t*)time_str, strlen(time_str), 100);
 }
 
+void Update_Timezone() {
+	utcOffset = calculate_utc_offset(UTC_Constant);
+	offsetMinutes = utcOffset.hours * 60 + utcOffset.minutes;
+}
+
 //Takes UTC time from the GPS to set the RTC
 void RTC_SetTime(uint8_t hour, uint8_t min, uint8_t sec)
 {
 	RTC_TimeTypeDef sTime;
-	uint8_t new_hour=0, new_min=0;
 
-	utc_offset = calculate_utc_offset(UTC_Constant);
-
-	if(min + utc_offset.minutes < 0){
-		new_min = 60 + min + utc_offset.minutes;
-		hour -= 1;
-		//printf("min <0: %d \r\n", new_min);
-	}
-	else if(min + utc_offset.minutes > 59){
-		new_min =  min + utc_offset.minutes - 60;
-		hour += 1;
-		//printf("min >59: %d \r\n", new_min);
-	}
-	else{
-		new_min = min + utc_offset.minutes;
-		//printf("min 0-59: %d \r\n", new_min);
-	}
-
-	if(hour + utc_offset.hours < 0){
-		new_hour = 24 + hour + utc_offset.hours;
-		//printf("hour <0: %d \r\n", new_hour);
-	}
-	else if(hour + utc_offset.hours > 23){
-		new_hour = hour + utc_offset.hours - 24;
-		//printf("hour >23: %d \r\n", new_hour);
-	}
-	else{
-		new_hour = hour + utc_offset.hours;
-		//printf("hour 0-23: %d \r\n", new_hour);
-	}
-
-	if(IsOneHourAdd) {
-		new_hour += 1;
-	}
-
-	sTime.Hours = new_hour;
-	sTime.Minutes = new_min;
+	sTime.Hours = hour;
+	sTime.Minutes = min;
 	sTime.Seconds = sec;
 	sTime.SubSeconds = 0;
 	sTime.TimeFormat = RTC_HOURFORMAT12_AM;
